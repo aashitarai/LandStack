@@ -1,10 +1,10 @@
 # LandStack
 
 > **Smart India Hackathon 2026**
-> **Team Name:** Caché[cite: 1]
-> **Problem Statement ID:** 26014[cite: 1]
-> **Problem Statement Title:** An Integrated GIS-based Digital Public Infrastructure for Land Governance[cite: 1]
-> **Theme:** Agriculture, FoodTech & Rural Development[cite: 1]
+> **Team Name:** Caché
+> **Problem Statement ID:** 26014
+> **Problem Statement Title:** An Integrated GIS-based Digital Public Infrastructure for Land Governance
+> **Theme:** Agriculture, FoodTech & Rural Development
 
 ---
 
@@ -24,35 +24,35 @@ https://github.com/user-attachments/assets/e3b97780-ef30-48ee-abb3-b33571ddf115
 ---
 
 ## 📌 What We Are Building
-LandStack sits on top of already-digitized state records (such as DILRMP, ULPIN, and SVAMITVA) and unifies them into a single ULPIN-linked parcel profile[cite: 1]. It consolidates ownership, tax, registration, zoning, and mortgage data behind a single API, offering a unified interface for both citizens and government officers[cite: 1].
+LandStack sits on top of already-digitized state records (such as DILRMP, ULPIN, and SVAMITVA) and unifies them into a single ULPIN-linked parcel profile. It consolidates ownership, tax, registration, zoning, and mortgage data behind a single API, offering a unified interface for both citizens and government officers.
 
 ### 💡 Innovation & Uniqueness (Key USP)
-**State-Agnostic Adapter Framework:** Current digitized data across states uses different schemas and formats[cite: 1]. Our configurable adapters translate each state's native format (e.g., 7-12 in Maharashtra, Patta/Chitta in Tamil Nadu, RTC in Karnataka, Khasra in UP/Rajasthan) into one common LandStack schema[cite: 1]. This acts as an interoperability layer, allowing new states to plug in without re-architecting the platform[cite: 1].
+**State-Agnostic Adapter Framework:** Current digitized data across states uses different schemas and formats. Our configurable adapters translate each state's native format (e.g., 7-12 in Maharashtra, Patta/Chitta in Tamil Nadu, RTC in Karnataka, Khasra in UP/Rajasthan) into one common LandStack schema. This acts as an interoperability layer, allowing new states to plug in without re-architecting the platform.
 
 ## 👥 User Roles & Features
 
-*   **Citizen (View • Request • Track):**[cite: 1]
-    *   View unified parcel profiles (Ownership, Registration, Tax)[cite: 1].
-    *   Check ownership, land use, and risk restrictions[cite: 1].
-    *   Submit service requests and track government processes/verification status[cite: 1].
-*   **Government Officer (Govern • Verify • Analyze):**[cite: 1]
-    *   View complete parcel data and GIS parcel intelligence[cite: 1].
-    *   Detect anomalies and calculate risk analytics across departments[cite: 1].
-    *   Manage verification workflows, audit trails, and land-use changes[cite: 1].
-*   **Administrator:**[cite: 1]
-    *   Manage users/roles via Role-Based Access Control (RBAC)[cite: 1].
-    *   Manage datasets, departments, and state adapter configurations[cite: 1].
-    *   View system analytics, logs, and governance dashboards[cite: 1].
+*   **Citizen (View • Request • Track):**
+    *   View unified parcel profiles (Ownership, Registration, Tax).
+    *   Check ownership, land use, and risk restrictions.
+    *   Submit service requests and track government processes/verification status.
+*   **Government Officer (Govern • Verify • Analyze):**
+    *   View complete parcel data and GIS parcel intelligence.
+    *   Detect anomalies and calculate risk analytics across departments.
+    *   Manage verification workflows, audit trails, and land-use changes.
+*   **Administrator:**
+    *   Manage users/roles via Role-Based Access Control (RBAC).
+    *   Manage datasets, departments, and state adapter configurations.
+    *   View system analytics, logs, and governance dashboards.
 
 ## 🏗️ Technical Architecture
 
-Our technical approach leverages mature, open-source stacks to enable secure, scalable development without proprietary infrastructure[cite: 1].
+Our technical approach leverages mature, open-source stacks to enable secure, scalable development without proprietary infrastructure.
 
-*   **Frontend (Web Applications):** React, TypeScript, Leaflet (interactive maps/geo visualization), and Tailwind CSS for a responsive UI[cite: 1].
-*   **Backend (API & Business Logic):** Python and FastAPI providing REST APIs, business logic, JWT Authentication, and RBAC[cite: 1].
-*   **Data Layer (Database & Storage):** PostgreSQL + PostGIS for normalized parcel data, spatial geometry, and relationships[cite: 1]. Local file storage for documents and satellite raster files[cite: 1].
-*   **AI / Geospatial Processing:** Python, GeoPandas, Rasterio, and Machine Learning for anomaly detection and risk calculation[cite: 1].
-*   **Deployment:** Docker for a containerized, easy local deployment setup[cite: 1].
+*   **Frontend (Web Applications):** React, TypeScript, Leaflet (interactive maps/geo visualization), and Tailwind CSS for a responsive UI.
+*   **Backend (API & Business Logic):** Python and FastAPI providing REST APIs, business logic, JWT Authentication, and RBAC.
+*   **Data Layer (Database & Storage):** PostgreSQL + PostGIS for normalized parcel data, spatial geometry, and relationships. Local file storage for documents and satellite raster files.
+*   **AI / Geospatial Processing:** Python, GeoPandas, Rasterio, and Machine Learning for anomaly detection and risk calculation.
+*   **Deployment:** Docker for a containerized, easy local deployment setup.
 
 ## 📂 Repository Structure
 
