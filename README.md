@@ -1,52 +1,78 @@
-# LandStack Intelligence — first working slice
+# LandStack
 
-A real, running map showing real OpenStreetMap building/landuse footprints for a
-bounded ~1.3 km² area of central Pune (Koregaon Park / Camp), Maharashtra.
-Free/self-hosted stack only — no paid API keys.
+> **Smart India Hackathon 2026**
+> **Team Name:** Caché[cite: 1]
+> **Problem Statement ID:** 26014[cite: 1]
+> **Problem Statement Title:** An Integrated GIS-based Digital Public Infrastructure for Land Governance[cite: 1]
+> **Theme:** Agriculture, FoodTech & Rural Development[cite: 1]
 
-**Data honesty note:** everything on this map is an OpenStreetMap crowd-sourced
-building/landuse footprint. It is **not** an official cadastral survey boundary
-(no 7/12, no CTS/Gat/Survey number, no ULPIN, no owner data). See
-`docs/DATA_SOURCES.md` and `docs/LEGAL_AND_PRIVACY.md` for the full data policy
-this app follows.
+---
 
-## Stack
+<!-- LEAVE SPACE FOR MAIN PAGE IMAGE -->
 
-- `postgis` — PostGIS 16/3.4, schema auto-applied from `db/init.sql`
-- `backend` — FastAPI (`backend/app/main.py`), serves parcel GeoJSON from PostGIS
-- `frontend` — Next.js 14 + TypeScript + Tailwind + MapLibre GL, renders the map
-- `backend/ingest/fetch_osm_pune.py` — one-off/rerunnable script that pulls real
-  data from the public Overpass API and upserts it into `parcels`
+<img width="1600" height="780" alt="image" src="https://github.com/user-attachments/assets/8f5a9a0b-1108-47f0-b25f-d2d35b8d5c08" />
 
-## Quick start
 
-```bash
-# 1. Build and start all three services
-docker compose build
-docker compose up -d
+<!-- LEAVE SPACE FOR DEMO VIDEO -->
+### 🎥 Prototype Demo Video
+https://github.com/user-attachments/assets/e3b97780-ef30-48ee-abb3-b33571ddf115
 
-# 2. Wait ~10s for postgis healthcheck, then load real OSM data into it
-docker compose exec backend python ingest/fetch_osm_pune.py
 
-# 3. Open the app
-#    Frontend: http://localhost:3000
-#    Backend health check: http://localhost:8000/api/health
-#    Backend docs: http://localhost:8000/docs
-```
 
-To stop everything: `docker compose down` (add `-v` to also drop the Postgres
-volume and start clean next time).
 
-## Re-running the ingestion script
 
-The upsert is keyed on `(source, source_record_id)` (the OSM way id), so it's
-safe to re-run any time to refresh the data:
+---
 
-```bash
-docker compose exec backend python ingest/fetch_osm_pune.py
-```
+## 📌 What We Are Building
+LandStack sits on top of already-digitized state records (such as DILRMP, ULPIN, and SVAMITVA) and unifies them into a single ULPIN-linked parcel profile[cite: 1]. It consolidates ownership, tax, registration, zoning, and mortgage data behind a single API, offering a unified interface for both citizens and government officers[cite: 1].
 
-## Running without Docker (local dev)
+### 💡 Innovation & Uniqueness (Key USP)
+**State-Agnostic Adapter Framework:** Current digitized data across states uses different schemas and formats[cite: 1]. Our configurable adapters translate each state's native format (e.g., 7-12 in Maharashtra, Patta/Chitta in Tamil Nadu, RTC in Karnataka, Khasra in UP/Rajasthan) into one common LandStack schema[cite: 1]. This acts as an interoperability layer, allowing new states to plug in without re-architecting the platform[cite: 1].
+
+## 👥 User Roles & Features
+
+*   **Citizen (View • Request • Track):**[cite: 1]
+    *   View unified parcel profiles (Ownership, Registration, Tax)[cite: 1].
+    *   Check ownership, land use, and risk restrictions[cite: 1].
+    *   Submit service requests and track government processes/verification status[cite: 1].
+*   **Government Officer (Govern • Verify • Analyze):**[cite: 1]
+    *   View complete parcel data and GIS parcel intelligence[cite: 1].
+    *   Detect anomalies and calculate risk analytics across departments[cite: 1].
+    *   Manage verification workflows, audit trails, and land-use changes[cite: 1].
+*   **Administrator:**[cite: 1]
+    *   Manage users/roles via Role-Based Access Control (RBAC)[cite: 1].
+    *   Manage datasets, departments, and state adapter configurations[cite: 1].
+    *   View system analytics, logs, and governance dashboards[cite: 1].
+
+## 🏗️ Technical Architecture
+
+Our technical approach leverages mature, open-source stacks to enable secure, scalable development without proprietary infrastructure[cite: 1].
+
+*   **Frontend (Web Applications):** React, TypeScript, Leaflet (interactive maps/geo visualization), and Tailwind CSS for a responsive UI[cite: 1].
+*   **Backend (API & Business Logic):** Python and FastAPI providing REST APIs, business logic, JWT Authentication, and RBAC[cite: 1].
+*   **Data Layer (Database & Storage):** PostgreSQL + PostGIS for normalized parcel data, spatial geometry, and relationships[cite: 1]. Local file storage for documents and satellite raster files[cite: 1].
+*   **AI / Geospatial Processing:** Python, GeoPandas, Rasterio, and Machine Learning for anomaly detection and risk calculation[cite: 1].
+*   **Deployment:** Docker for a containerized, easy local deployment setup[cite: 1].
+
+## 📂 Repository Structure
+
+```text
+├── backend/
+│   ├── app/                # FastAPI application (main.py, models, APIs for ULPIN, Workflows, Auth)
+│   ├── connectors/         # State-agnostic Adapter Framework (e.g., bhunaksha)
+│   ├── ingest/             # Data transformation & fetch scripts (OSM parsing, mock generators)
+│   ├── Dockerfile          # Backend containerization
+│   └── requirements.txt    # Python dependencies
+├── frontend/
+│   ├── app/                # Next.js/React application (Dashboard, Governance, State Adapters UI)
+│   ├── components/         # Reusable UI components (ParcelMap, LandGlobe, SearchBar, Heatmap)
+│   ├── Dockerfile          # Frontend containerization
+│   ├── tailwind.config.ts  # Tailwind CSS configuration
+│   └── package.json        # Node.js dependencies
+├── db/                     
+│   └── init.sql            # PostgreSQL/PostGIS schema initialization
+├── docs/                   # Documentation and architecture notes
+└── docker-compose.yml      # Orchestration for Frontend, Backend, and Database
 
 Backend:
 ```bash
