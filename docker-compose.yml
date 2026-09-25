@@ -1,0 +1,52 @@
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: landstack-postgis
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: landstack
+      POSTGRES_PASSWORD: landstack
+      POSTGRES_DB: landstack
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U landstack -d landstack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: landstack-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://landstack:landstack@postgis:5432/landstack
+      # Gated real-data connector — see backend/app/connectors/bhunaksha.py and
+      # docs/LEGAL_AND_PRIVACY.md. Enabled here per explicit user authorization
+      # (SIH context) for single, rate-limited, user-initiated lookups only —
+      # never bulk enumeration.
+      ENABLE_BHUNAKSHA_CONNECTOR: "true"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: landstack-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgis_data:
