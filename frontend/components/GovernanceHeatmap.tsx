@@ -1,92 +1,69 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import L, { Map as LeafletMap } from "leaflet";
-import "leaflet/dist/leaflet.css";
+import maplibregl, { Map as MLMap } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
-type Point = {
-  ulpin: string;
-  lat: number;
-  lng: number;
-  risk_score: number;
-  risk_label: string;
-  scenario: string;
-  anomaly_count: number;
-};
+type Point = { ulpin: string; lat: number; lng: number; risk_score: number; risk_label: string; scenario: string; anomaly_count: number };
 
-const RISK_COLOR: Record<string, string> = {
-  Low: "#22c55e",
-  Moderate: "#f59e0b",
-  High: "#ef4444",
-};
+const RISK_COLOR: Record<string, string> = { Low: "#22c55e", Moderate: "#f59e0b", High: "#ef4444" };
 
 export default function GovernanceHeatmap({ points }: { points: Point[] }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const leafletMapRef = useRef<LeafletMap | null>(null);
-  const markersLayerRef = useRef<L.LayerGroup | null>(null);
+  const mapRef = useRef<MLMap | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current || leafletMapRef.current) return;
-    const container = containerRef.current;
-
-    try {
-      const map = L.map(container, {
-        center: [18.8, 73.5],
-        zoom: 8,
-        zoomControl: true,
-        attributionControl: true,
-      });
-
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        {
-          subdomains: ["a", "b", "c", "d"],
-          maxZoom: 18,
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> &copy; <a href="https://carto.com/" target="_blank" rel="noreferrer">CARTO</a>',
-        }
-      ).addTo(map);
-
-      const markersGroup = L.layerGroup().addTo(map);
-      markersLayerRef.current = markersGroup;
-      leafletMapRef.current = map;
-
-      setTimeout(() => map.invalidateSize(), 150);
-      setTimeout(() => map.invalidateSize(), 500);
-    } catch (err) {
-      console.warn("Leaflet heatmap init error:", err);
-    }
-
+    if (!containerRef.current || mapRef.current) return;
+    const map = new maplibregl.Map({
+      container: containerRef.current,
+      style: "https://tiles.openfreemap.org/styles/liberty",
+      center: [73.5, 18.8],
+      zoom: 8,
+      attributionControl: { compact: true },
+    });
+    mapRef.current = map;
+    map.addControl(new maplibregl.NavigationControl({}), "top-right");
     return () => {
-      if (leafletMapRef.current) {
-        try {
-          leafletMapRef.current.remove();
-        } catch {
-          // ignore
-        }
-        leafletMapRef.current = null;
-      }
+      map.remove();
+      mapRef.current = null;
     };
   }, []);
 
   useEffect(() => {
-    if (!leafletMapRef.current || !markersLayerRef.current) return;
-    const group = markersLayerRef.current;
-    group.clearLayers();
-
-    points.forEach((p) => {
-      const color = RISK_COLOR[p.risk_label] || "#3b82f6";
-      const marker = L.circleMarker([p.lat, p.lng], {
-        radius: 7,
-        color: "#ffffff",
-        fillColor: color,
-        fillOpacity: 0.85,
-        weight: 1.5,
-      }).bindPopup(
-        `<div class="text-xs p-1"><strong>ULPIN:</strong> ${p.ulpin}<br/><strong>Risk:</strong> <span style="color:${color};font-weight:600">${p.risk_label} (${p.risk_score})</span><br/><strong>Anomalies:</strong> ${p.anomaly_count}</div>`
-      );
-      group.addLayer(marker);
-    });
+    const map = mapRef.current;
+    if (!map || points.length === 0) return;
+    const addLayer = () => {
+      const geojson = {
+        type: "FeatureCollection" as const,
+        features: points.map((p) => ({
+          type: "Feature" as const,
+          geometry: { type: "Point" as const, coordinates: [p.lng, p.lat] },
+          properties: p,
+        })),
+      };
+      if (map.getSource("risk-points")) {
+        (map.getSource("risk-points") as maplibregl.GeoJSONSource).setData(geojson as any);
+      } else {
+        map.addSource("risk-points", { type: "geojson", data: geojson as any });
+        map.addLayer({
+          id: "risk-points-layer",
+          type: "circle",
+          source: "risk-points",
+          paint: {
+            "circle-radius": 4,
+            "circle-color": [
+              "match", ["get", "risk_label"],
+              "High", RISK_COLOR.High,
+              "Moderate", RISK_COLOR.Moderate,
+              RISK_COLOR.Low,
+            ],
+            "circle-opacity": 0.75,
+          },
+        });
+      }
+    };
+    if (map.loaded()) addLayer();
+    else map.on("load", addLayer);
   }, [points]);
 
   return <div ref={containerRef} className="h-full w-full rounded-lg" />;

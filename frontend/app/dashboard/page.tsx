@@ -2,16 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import type { ParcelMapHandle } from "@/components/ParcelMap";
+import ParcelMap, { ParcelMapHandle } from "@/components/ParcelMap";
 import SearchBar from "@/components/SearchBar";
 import RealRecordLookup from "@/components/RealRecordLookup";
 import LoginBox from "@/components/LoginBox";
 import { AuthUser, getAuth, setAuth } from "@/lib/auth";
-
-const ParcelMap = dynamic(() => import("@/components/ParcelMap"), {
-  ssr: false,
-});
 
 export default function AppPage() {
   const mapRef = useRef<ParcelMapHandle>(null);
