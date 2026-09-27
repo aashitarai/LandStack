@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { authHeaders, getAuth } from "@/lib/auth";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://landstack-fao4.onrender.com"
+).replace(/\/$/, "");
 
 type Profile = {
   ulpin: string;

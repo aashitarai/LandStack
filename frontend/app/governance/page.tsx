@@ -5,7 +5,9 @@ import Link from "next/link";
 import { authHeaders, getAuth, AuthUser } from "@/lib/auth";
 import GovernanceHeatmap from "@/components/GovernanceHeatmap";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://landstack-fao4.onrender.com"
+).replace(/\/$/, "");
 
 type Summary = {
   total_parcels: number;
