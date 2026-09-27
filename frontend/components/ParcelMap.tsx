@@ -16,7 +16,8 @@ import ParcelProfileDrawer from "./ParcelProfileDrawer";
 const PUNE_CENTER: [number, number] = [73.8835, 18.5400];
 const INITIAL_ZOOM = 16.5;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://landstack-fao4.onrender.com/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 type ParcelProperties = {
   internal_parcel_id: number;

@@ -38,7 +38,7 @@ website. Wait about 10 seconds for them to finish starting.
 
 - The website: **http://localhost:3000**
 - The map app directly: **http://localhost:3000/dashboard**
-- The raw API (for poking around): **import.meta.env.VITE_API_URL || "https://landstack-fao4.onrender.com/api"/docs**
+- The raw API (for poking around): **http://localhost:8000/docs**
 
 **5. Sign in to see the officer/admin features** (top-right "Sign in" on the
 map page):

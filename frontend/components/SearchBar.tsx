@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://landstack-fao4.onrender.com/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+
 type SearchResult = {
   type: "building" | "parcel" | "place" | "ulpin";
   label: string;
