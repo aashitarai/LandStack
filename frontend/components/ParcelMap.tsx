@@ -17,7 +17,7 @@ const PUNE_CENTER: [number, number] = [73.8835, 18.5400];
 const INITIAL_ZOOM = 16.5;
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 type ParcelProperties = {
   internal_parcel_id: number;
@@ -216,13 +216,14 @@ const ParcelMap = forwardRef<ParcelMapHandle>(function ParcelMap(_props, ref) {
       });
 
       const loadParcelsForViewport = async () => {
-        const bounds = map.getBounds();
-        const url = new URL(`${API_BASE_URL}/api/parcels/bbox`);
-        url.searchParams.set("minLon", String(bounds.getWest()));
-        url.searchParams.set("minLat", String(bounds.getSouth()));
-        url.searchParams.set("maxLon", String(bounds.getEast()));
-        url.searchParams.set("maxLat", String(bounds.getNorth()));
         try {
+          const bounds = map.getBounds();
+          const baseUrl = API_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "http://localhost:8000");
+          const url = new URL(`${baseUrl}/api/parcels/bbox`);
+          url.searchParams.set("minLon", String(bounds.getWest()));
+          url.searchParams.set("minLat", String(bounds.getSouth()));
+          url.searchParams.set("maxLon", String(bounds.getEast()));
+          url.searchParams.set("maxLat", String(bounds.getNorth()));
           const res = await fetch(url.toString());
           if (!res.ok) throw new Error(`API returned ${res.status}`);
           const data = await res.json();

@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { authHeaders, getAuth, AuthUser } from "@/lib/auth";
-import GovernanceHeatmap from "@/components/GovernanceHeatmap";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const GovernanceHeatmap = dynamic(() => import("@/components/GovernanceHeatmap"), {
+  ssr: false,
+});
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 type Summary = {
   total_parcels: number;
