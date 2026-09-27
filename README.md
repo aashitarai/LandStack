@@ -94,7 +94,7 @@ Frontend:
 cd frontend
 npm install
 npm run dev
-# http://localhost:3000, expects the backend at http://localhost:8000
+# http://localhost:3000, expects the backend at import.meta.env.VITE_API_URL || "https://landstack-fao4.onrender.com/api"
 # (override with NEXT_PUBLIC_API_BASE_URL in frontend/.env.local)
 ```
 

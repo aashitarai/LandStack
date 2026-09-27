@@ -1,6 +1,6 @@
 "use client";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "import.meta.env.VITE_API_URL || "https://landstack-fao4.onrender.com/api"";
 const STORAGE_KEY = "landstack_auth";
 
 export type AuthUser = { username: string; role: "citizen" | "officer" | "admin"; name: string; token: string };
