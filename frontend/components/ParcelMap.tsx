@@ -62,6 +62,19 @@ export type ParcelMapHandle = {
   selectParcel: (parcelId: number, lat: number, lng: number) => void;
 };
 
+function isWebGLSupported(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(
+      window.WebGLRenderingContext &&
+        (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    return false;
+  }
+}
+
 const ParcelMap = forwardRef<ParcelMapHandle>(function ParcelMap(_props, ref) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
@@ -71,6 +84,7 @@ const ParcelMap = forwardRef<ParcelMapHandle>(function ParcelMap(_props, ref) {
   const [parcelCount, setParcelCount] = useState<number | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [profileUlpin, setProfileUlpin] = useState<string | null>(null);
+  const [webglError, setWebglError] = useState<string | null>(null);
 
   async function openParcelById(parcelId: number, lngLat: { lng: number; lat: number }) {
     try {
@@ -131,13 +145,25 @@ const ParcelMap = forwardRef<ParcelMapHandle>(function ParcelMap(_props, ref) {
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: "https://tiles.openfreemap.org/styles/liberty",
-      center: PUNE_CENTER,
-      zoom: INITIAL_ZOOM,
-      attributionControl: { compact: true },
-    });
+    if (!isWebGLSupported()) {
+      setWebglError("Hardware acceleration / WebGL is disabled or unsupported in your browser.");
+      return;
+    }
+
+    let map: MLMap;
+    try {
+      map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: PUNE_CENTER,
+        zoom: INITIAL_ZOOM,
+        attributionControl: { compact: true },
+      });
+    } catch (err: any) {
+      console.warn("MapLibre WebGL context creation failed:", err);
+      setWebglError(err?.message || "Failed to initialize WebGL context.");
+      return;
+    }
     mapRef.current = map;
 
     map.addControl(new maplibregl.NavigationControl({}), "top-right");
@@ -269,6 +295,26 @@ const ParcelMap = forwardRef<ParcelMapHandle>(function ParcelMap(_props, ref) {
   return (
     <div className="relative h-full w-full">
       <div ref={mapContainerRef} className="h-full w-full" />
+
+      {webglError && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#090d11]/95 p-6 text-center text-white backdrop-blur-sm">
+          <div className="max-w-md rounded-xl border border-amber-500/30 bg-[#161f28] p-6 shadow-2xl">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20 text-2xl text-amber-400">
+              ⚠️
+            </div>
+            <h3 className="text-base font-semibold text-white">WebGL Disabled in Browser</h3>
+            <p className="mt-2 text-xs text-white/70 leading-relaxed">
+              {webglError}
+            </p>
+            <div className="mt-4 rounded-lg bg-black/40 p-3 text-left text-xs text-white/60 space-y-1">
+              <p className="font-medium text-white/80">How to enable WebGL:</p>
+              <p>1. Open your browser settings (e.g. Chrome / Brave / Edge Settings &gt; System).</p>
+              <p>2. Enable <strong>&quot;Use graphics acceleration when available&quot;</strong>.</p>
+              <p>3. Relaunch your browser and reload this page.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="pointer-events-none absolute left-4 top-4 flex flex-col gap-2">
         <div className="pointer-events-auto rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-xs text-white/70 backdrop-blur">

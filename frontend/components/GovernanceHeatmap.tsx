@@ -8,19 +8,38 @@ type Point = { ulpin: string; lat: number; lng: number; risk_score: number; risk
 
 const RISK_COLOR: Record<string, string> = { Low: "#22c55e", Moderate: "#f59e0b", High: "#ef4444" };
 
+function isWebGLSupported(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(
+      window.WebGLRenderingContext &&
+        (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    return false;
+  }
+}
+
 export default function GovernanceHeatmap({ points }: { points: Point[] }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: "https://tiles.openfreemap.org/styles/liberty",
-      center: [73.5, 18.8],
-      zoom: 8,
-      attributionControl: { compact: true },
-    });
+    if (!isWebGLSupported()) return;
+    let map: MLMap;
+    try {
+      map = new maplibregl.Map({
+        container: containerRef.current,
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: [73.5, 18.8],
+        zoom: 8,
+        attributionControl: { compact: true },
+      });
+    } catch {
+      return;
+    }
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({}), "top-right");
     return () => {
